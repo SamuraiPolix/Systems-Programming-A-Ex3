@@ -51,7 +51,7 @@ void StrList_free(StrList* strList){
                 free(temp->data);
             free(temp);
         }
-        free (strList);
+        free(strList);
     }
 }
 
@@ -181,14 +181,14 @@ void StrList_print(const StrList* strList){
     if (strList != NULL) {
         p = strList->head;
     }
-    while (p->next != NULL){
+    while (p != NULL){
         if (p->data != NULL) {
-            printf("%s ", p->data);
+            printf("%s", p->data);
+        }
+        if (p->next != NULL){
+            printf(" ");
         }
         p = p->next;
-    }
-    if (p != NULL){
-        printf("%s", p->data);
     }
     printf("\n");
 }
@@ -379,7 +379,6 @@ StrList* StrList_clone(const StrList* strList){
 void StrList_reverse( StrList* strList){
     // We will use 3 pointers, each iteration we will "change the direction" of the "next" pointer
     // If list is of size <= 1, no action needed
-    Node *bef = NULL, *curr = NULL, *next = NULL;
     if (strList->size <= 1){
         return;
     }
@@ -391,6 +390,7 @@ void StrList_reverse( StrList* strList){
     }
     // list is of size 3 and more
     // set 3 pointers (one after the other) on the start of the list
+    Node *bef = NULL, *curr = NULL, *next = NULL;
     bef = strList->head;        // head node
     curr = bef->next;           // head's next node
     next = curr->next;          // head's next's next node
@@ -413,8 +413,36 @@ void StrList_reverse( StrList* strList){
  * Sort the given list in lexicographical order 
  */
 void StrList_sort(StrList* strList){
-    // Using bubble sort?
-    
+    if (strList->size <= 1 || StrList_isSorted(strList) == 1){
+        return;
+    }
+
+    Node *p, *lastNode = NULL;        // pointer for iteration over the list
+    int swapped;
+
+    /*
+    We are using bubble-sort to send the "biggest" data to the end of the list,
+    while keeping a pointer on the end of the unsorted "range", (each iteration we have 1 less node to visit).
+    'swapped' holds 1 if a single swap was made while going through the list,
+    if no swaps were made -> the list is sorted.
+    */
+    do {
+        swapped = 0;
+        p = strList->head;
+        
+        // While the end is not met
+        while (p->next != lastNode){
+            if (strcmp(p->data, p->next->data) > 0){
+                char *temp = p->data;
+                p->data = p->next->data;
+                p->next->data = temp;
+
+                swapped = 1;
+            }
+            p = p->next;
+        }
+        lastNode = p;       // p is in place now, save this node so we don't need to visit him again
+    } while (swapped == 1);
 }
 
 /*
