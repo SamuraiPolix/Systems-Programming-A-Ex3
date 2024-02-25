@@ -34,3 +34,34 @@
 0-לצאת מהתוכנית
 */
  
+int main() {
+    int action;
+
+    do {
+        scanf("%d", &action);
+        
+        switch (action)
+        {
+            case INSERT_MANY_TO_LIST:
+                
+            case INSERT_TO_SPECIFIC_INDEX:
+            case PRINT_LIST:
+            case PRINT_LIST_LENGTH:
+            case PRINT_SPECIFIC_INDEX:
+            case PRINT_NUM_OF_CHARS:
+            case HOW_MANY_TIMES_STR_IN_LIST:
+            case REMOVE_STR_FROM_LIST:
+            case REMOVE_SPECIFIC_INDEX:
+            case INVERT_LIST:
+            case DELETE_LIST:
+            case SORT_LEXI:
+            case CHECK_SORTED_LEXI:
+            case EXIT:
+                return 0;
+                break;        
+            default:
+                print("ERROR: incorrect input!");
+        }
+    } while (action != 0);
+
+}
