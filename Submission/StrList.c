@@ -1,8 +1,5 @@
 #include "StrList.h"
-#include <stdio.h>
-#include <string.h>
 
-#define MEMORY_ALLOCATION_ERROR "Error: couldn't allocate memory!"
 #define INCORRECT_INDEX_ERROR "Error: incorrect index!"
 
 /*
@@ -150,7 +147,7 @@ void StrList_insertAt(StrList* strList, const char* data,int index){
         strList->head = temp;
     }
     else {
-        Node *p = temp;
+        Node *p = strList->head;
         // TODO 2: kind of repeated code - get node at index
         int count = 0;
         // Go through list until the node before the desired index is reached
@@ -184,11 +181,14 @@ void StrList_print(const StrList* strList){
     if (strList != NULL) {
         p = strList->head;
     }
-    while (p != NULL){
+    while (p->next != NULL){
         if (p->data != NULL) {
             printf("%s ", p->data);
         }
         p = p->next;
+    }
+    if (p != NULL){
+        printf("%s", p->data);
     }
     printf("\n");
 }
@@ -218,7 +218,7 @@ void StrList_printAt(const StrList* strList,int index){
 }
 
 /*
- * Return the amount of chars in the list.
+ * Return the amount of chars in the list without spaces
 */
 int StrList_printLen(const StrList* strList) {
     int count = 0;
@@ -227,10 +227,10 @@ int StrList_printLen(const StrList* strList) {
         p = strList->head;
     }
     while (p != NULL){
-        count += strlen(p->data) + 1;         // length of curr data + a space
+        count += strlen(p->data);         // length of curr data without the space
         p = p->next;
     }
-    return count - 1;       // remove last space
+    return count;       // remove last space
 }
 
 /*
@@ -378,17 +378,61 @@ StrList* StrList_clone(const StrList* strList){
  */
 void StrList_reverse( StrList* strList){
     // We will use 3 pointers, each iteration we will "change the direction" of the "next" pointer
-    
+    // If list is of size <= 1, no action needed
+    Node *bef = NULL, *curr = NULL, *next = NULL;
+    if (strList->size <= 1){
+        return;
+    }
+    if (strList->size == 2){
+        // reverse from HEAD -> X -> Y to HEAD -> Y -> X
+        strList->head->next->next = strList->head->next;
+        strList->head = strList->head->next;
+        strList->head->next->next = NULL;
+    }
+    // list is of size 3 and more
+    // set 3 pointers (one after the other) on the start of the list
+    bef = strList->head;        // head node
+    curr = bef->next;           // head's next node
+    next = curr->next;          // head's next's next node
 
+    bef->next = NULL;   // Reverse the first node to point to NULL
+    while (next != NULL){
+        // reverse curr node to point to the one behind him
+        curr->next = bef;
+        // move all pointers 1 step
+        bef = curr;
+        curr = next;
+        next = next->next;
+    }
+    // Last node and move head to the start of the reversed list
+    curr->next = bef;
+    strList->head = curr;
 }
 
 /*
  * Sort the given list in lexicographical order 
  */
-void StrList_sort( StrList* strList);
+void StrList_sort(StrList* strList){
+    // Using bubble sort?
+    
+}
 
 /*
  * Checks if the given list is sorted in lexicographical order
  * returns 1 for sorted,   0 otherwise
  */
-int StrList_isSorted(StrList* strList);
+int StrList_isSorted(StrList* strList){
+    if (strList->size <= 1){
+        return 1;
+    }
+    Node *p = strList->head;
+    
+    while (p->next != NULL){
+        // strcmp compares lexicographically. if 2 sequential nodes aren't sorted, return false;
+        if (strcmp(p->data, p->next->data) > 0){
+            return 0;
+        }
+        p = p->next;
+    }
+    return 1;
+}
