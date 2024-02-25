@@ -112,7 +112,7 @@ void StrList_insertLast(StrList* strList, const char* data){
 */
 void StrList_insertAt(StrList* strList, const char* data,int index){
     // ASK: do i need to check these conditions? if index is out of bound, etc.
-    if (index > strList->size || index < 0){
+    if (strList == NULL || index > strList->size || index < 0){
         printf("%s\n", INCORRECT_INDEX_ERROR);
         return;
     }
@@ -138,11 +138,13 @@ void StrList_insertAt(StrList* strList, const char* data,int index){
 
     if (index == 0){
         // If another node exists after the head, set it as temp's next, else, set temp's next to NULL
-        if (strList->head->next != NULL){
-            temp->next = strList->head;
-        }
-        else{
+        if (strList->head == NULL){
             temp->next = NULL;
+        }
+        else {
+            if (strList->head->next != NULL){
+                temp->next = strList->head;
+            }   
         }
         strList->head = temp;
     }
@@ -297,7 +299,7 @@ void StrList_remove(StrList* strList, const char* data){
 */
 void StrList_removeAt(StrList* strList, int index){
     // ASK: do i need to check these conditions? if index is out of bound, etc.
-    if (index > strList->size || index < 0){
+    if (strList == NULL || strList->size == 0 || index > strList->size || index < 0){
         printf("%s\n", INCORRECT_INDEX_ERROR);
         return;
     }
@@ -329,9 +331,19 @@ void StrList_removeAt(StrList* strList, int index){
  * returns 0 if not and any other number if yes
  */
 int StrList_isEqual(const StrList* strList1, const StrList* strList2){
-    if (strList1->size != strList2->size){
-        return 0;
+    if (strList1 != NULL && strList2 != NULL) {
+        // They are both not null and their sizes are different
+        if (strList1->size != strList2->size){
+                return 0;
+        }
     }
+    else{
+        if (strList1 == NULL && strList2 == NULL){
+            // Both null
+            return 1;
+        }
+    }
+    
 
     Node *p1 = NULL;
     Node *p2 = NULL;
@@ -366,7 +378,7 @@ StrList* StrList_clone(const StrList* strList){
     Node *p = NULL;
     p = strList->head;
     // TODO: so many checks for null!!!
-    if (clonedList != NULL) {
+    while (p != NULL) {
         StrList_insertAt(clonedList, p->data, 0);
         p = p->next;
     }
@@ -379,7 +391,7 @@ StrList* StrList_clone(const StrList* strList){
 void StrList_reverse( StrList* strList){
     // We will use 3 pointers, each iteration we will "change the direction" of the "next" pointer
     // If list is of size <= 1, no action needed
-    if (strList->size <= 1){
+    if (strList == NULL || strList->size <= 1){
         return;
     }
     if (strList->size == 2){
@@ -413,7 +425,7 @@ void StrList_reverse( StrList* strList){
  * Sort the given list in lexicographical order 
  */
 void StrList_sort(StrList* strList){
-    if (strList->size <= 1 || StrList_isSorted(strList) == 1){
+    if (strList == NULL || strList->size <= 1 || StrList_isSorted(strList) == 1){
         return;
     }
 
