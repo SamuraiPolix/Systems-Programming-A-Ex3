@@ -10,6 +10,9 @@ all: StrList
 
 .PHONY: clean
 
+test: test.o StrList.o
+	$(CC) $(CFLAGS) -o $@ $^ 
+
 StrList: $(TARGET_OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 
