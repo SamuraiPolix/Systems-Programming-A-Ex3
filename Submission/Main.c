@@ -67,10 +67,9 @@ int main() {
                 scanf("%d", &index);
                 getchar();
                 fgets(word, MAX_CHARS, stdin);
-                int len = strlen(word);
                 // remove line break if exists
-                if (len > 0 && word[len-1] == '\n'){
-                    word[len-1] = 0;
+                if (strlen(word) > 0 && word[strlen(word)-1] == '\n'){
+                    word[strlen(word)-1] = 0;
                 }
                 StrList_insertAt(strList, word, index); 
                 break;
@@ -89,10 +88,18 @@ int main() {
                 break;
             case HOW_MANY_TIMES_STR_IN_LIST:
                 fgets(word, MAX_CHARS, stdin);
+                // remove line break if exists
+                if (strlen(word) > 0 && word[strlen(word)-1] == '\n'){
+                    word[strlen(word)-1] = 0;
+                }
                 printf("%d\n", StrList_count(strList, word));
                 break;
             case REMOVE_STR_FROM_LIST:
                 fgets(word, MAX_CHARS, stdin);
+                // remove line break if exists
+                if (strlen(word) > 0 && word[strlen(word)-1] == '\n'){
+                    word[strlen(word)-1] = 0;
+                }
                 StrList_remove(strList, word);
                 break;
             case REMOVE_SPECIFIC_INDEX:
@@ -104,6 +111,7 @@ int main() {
                 break;
             case DELETE_LIST:
                 StrList_free(strList);
+                strList = NULL;
                 break;
             case SORT_LEXI:
                 StrList_sort(strList);
