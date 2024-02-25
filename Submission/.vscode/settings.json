@@ -1,9 +1,0 @@
-{
-    "makefile.launchConfigurations": [
-        {
-            "cwd": "/home/sam/Desktop/git/systemsProgrammingAEx3/Submission",
-            "binaryPath": "/home/sam/Desktop/git/systemsProgrammingAEx3/Submission/StrList",
-            "binaryArgs": []
-        }
-    ]
-}
