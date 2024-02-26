@@ -179,7 +179,7 @@ char* StrList_firstData(const StrList* strList){
  * Prints the StrList to the standard output.
  */
 void StrList_print(const StrList* strList){
-    Node *p = NULL;
+    const Node *p = NULL;
     if (strList != NULL) {
         p = strList->head;
     }
@@ -206,7 +206,7 @@ void StrList_printAt(const StrList* strList,int index){
         return;
     }
     // Go through list until the node at the desired index is reached
-    Node *p = NULL;
+    const Node *p = NULL;
     if (strList != NULL){
         p = strList->head;
     }
@@ -224,7 +224,7 @@ void StrList_printAt(const StrList* strList,int index){
 */
 int StrList_printLen(const StrList* strList) {
     int count = 0;
-    Node *p = NULL;
+    const Node *p = NULL;
     if (strList != NULL){
         p = strList->head;
     }
@@ -241,7 +241,7 @@ Given a string, return the number of times it exists in the list.
 int StrList_count(StrList* strList, const char* data){
     // ASK: exists as a whole in one data string? or can it also exist as a substring inside a data string?
     // I assume it's the whole data that needs to be this string
-    Node *p = NULL;
+    const Node *p = NULL;
     if (strList != NULL){
         p = strList->head;
     }
@@ -345,8 +345,8 @@ int StrList_isEqual(const StrList* strList1, const StrList* strList2){
     }
     
 
-    Node *p1 = NULL;
-    Node *p2 = NULL;
+    const Node *p1 = NULL;
+    const Node *p2 = NULL;
     if (strList1 != NULL){
         p1 = strList1->head;
     }
@@ -375,7 +375,7 @@ StrList* StrList_clone(const StrList* strList){
         return NULL;
     }
     StrList *clonedList = StrList_alloc();
-    Node *p = NULL;
+    const Node *p = NULL;
     p = strList->head;
     // TODO: so many checks for null!!!
     while (p != NULL) {
@@ -388,7 +388,7 @@ StrList* StrList_clone(const StrList* strList){
 /*
  * Reverces the given StrList. 
  */
-void StrList_reverse( StrList* strList){
+void StrList_reverse(StrList* strList){
     // We will use 3 pointers, each iteration we will "change the direction" of the "next" pointer
     // If list is of size <= 1, no action needed
     if (strList == NULL || strList->size <= 1){
@@ -465,7 +465,7 @@ int StrList_isSorted(StrList* strList){
     if (strList->size <= 1){
         return 1;
     }
-    Node *p = strList->head;
+    const Node *p = strList->head;
     
     while (p->next != NULL){
         // strcmp compares lexicographically. if 2 sequential nodes aren't sorted, return false;
