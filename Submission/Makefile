@@ -20,4 +20,4 @@ StrList: $(TARGET_OBJECTS)
 	$(CC) $(CFLAGS) -c $^
 
 clean:
-	rm -f *.o StrList *.gch
+	rm -f *.o StrList test *.gch
