@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #define MEMORY_ALLOCATION_ERROR "Error: couldn't allocate memory!"
 
 /********************************************************************************

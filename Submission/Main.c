@@ -1,5 +1,6 @@
 #include "StrList.h"
 #define MAX_CHARS 2047
+
 #define INSERT_MANY_TO_LIST 1
 #define INSERT_TO_SPECIFIC_INDEX 2
 #define PRINT_LIST 3
@@ -34,6 +35,8 @@
 13-בדיקה האם הרשימה מסודרת לפי סדר לקסיקוגרפי
 0-לצאת מהתוכנית
 */
+
+void removeLineBreak(char *);
  
 int main() {
     int action;
@@ -51,7 +54,7 @@ int main() {
     do {
         scanf("%d", &action);
 
-        while ((getchar()) != '\n');       // Clears the input buffer
+        while ((getchar()) != '\n');       // Denies line breaks
         
         switch (action)
         {
@@ -67,10 +70,7 @@ int main() {
                 scanf("%d", &index);
                 getchar();
                 fgets(word, MAX_CHARS, stdin);
-                // remove line break if exists
-                if (strlen(word) > 0 && word[strlen(word)-1] == '\n'){
-                    word[strlen(word)-1] = 0;
-                }
+                removeLineBreak(word);          // remove line break if exists
                 StrList_insertAt(strList, word, index); 
                 break;
             case PRINT_LIST:
@@ -88,18 +88,12 @@ int main() {
                 break;
             case HOW_MANY_TIMES_STR_IN_LIST:
                 fgets(word, MAX_CHARS, stdin);
-                // remove line break if exists
-                if (strlen(word) > 0 && word[strlen(word)-1] == '\n'){
-                    word[strlen(word)-1] = 0;
-                }
+                removeLineBreak(word);          // remove line break if exists
                 printf("%d\n", StrList_count(strList, word));
                 break;
             case REMOVE_STR_FROM_LIST:
                 fgets(word, MAX_CHARS, stdin);
-                // remove line break if exists
-                if (strlen(word) > 0 && word[strlen(word)-1] == '\n'){
-                    word[strlen(word)-1] = 0;
-                }
+                removeLineBreak(word);          // remove line break if exists
                 StrList_remove(strList, word);
                 break;
             case REMOVE_SPECIFIC_INDEX:
@@ -129,4 +123,11 @@ int main() {
     } while (action != 0);
 
     return 0;
+}
+
+// Removes line break at the end of 'word', if exists
+void removeLineBreak(char *word){
+    if (strlen(word) > 0 && word[strlen(word)-1] == '\n'){
+        word[strlen(word)-1] = 0;
+    }
 }

@@ -13,7 +13,7 @@ typedef struct _Node {
 
 typedef struct _StrList {
     Node* head;
-    size_t size;        // ASK: can i store the size of it?
+    size_t size;
 } StrList;
 
 /*
@@ -37,6 +37,7 @@ StrList* StrList_alloc(){
 /*
  * Frees the memory and resources allocated to StrList.
  * If StrList==NULL does nothing (same as free).
+ * it's the user's responsibility to change strList to NULL afer freeing.
  */
 void StrList_free(StrList* strList){
     // Frees the list and all its nodes
@@ -55,6 +56,35 @@ void StrList_free(StrList* strList){
     }
 }
 
+Node* Node_alloc(const char* data, Node* next){
+    // Create a new node
+    Node *node = NULL;
+    node = (Node*)malloc(sizeof(Node));
+    if (node == NULL){
+        printf("%s\n", MEMORY_ALLOCATION_ERROR);
+        return NULL;
+    }
+
+    node->data = (char*)malloc(sizeof(char) * (strlen(data) + 1));
+    if (node->data == NULL) {
+        printf("%s\n", MEMORY_ALLOCATION_ERROR);
+        free (node);        // allocating memory for node->data failed, so free node as well.
+        return NULL;
+    }
+    strcpy(node->data, data);   // deep copy data
+    return node;
+}
+
+void Node_free(Node* node){
+    if (node != NULL){
+        if (node->data != NULL){
+            free (node->data);
+        }
+        free (node);
+    }
+}
+
+
 /*
  * Returns the number of elements in the StrList.
  */
@@ -70,24 +100,13 @@ void StrList_insertLast(StrList* strList, const char* data){
         strList = StrList_alloc();
     }
 
-    // TODO: duplicated code -> make func
-
     // Create a new node
     Node *temp = NULL;
-    temp = (Node*)malloc(sizeof(Node));
+    temp = Node_alloc(data, NULL);
+
     if (temp == NULL){
-        printf("%s\n", MEMORY_ALLOCATION_ERROR);
-        return;
+        return;     // memory allocation failed
     }
-
-    temp->data = (char*)malloc(sizeof(char) * (strlen(data) + 1));
-    if (temp->data == NULL) {
-        printf("%s\n", MEMORY_ALLOCATION_ERROR);
-        return;
-    }
-    strcpy(temp->data, data);
-
-    // TODO: END OF duplicated code -> make func
 
     /* If strList->head in NULL - this is the first node.
         else - find the last node and insert in there */
@@ -111,32 +130,21 @@ void StrList_insertLast(StrList* strList, const char* data){
     assuming the index is valid
 */
 void StrList_insertAt(StrList* strList, const char* data,int index){
-    // ASK: do i need to check these conditions? if index is out of bound, etc.
+    // Check if list in not NULL and the index is avaialble
     if (strList == NULL || index > strList->size || index < 0){
         printf("%s\n", INCORRECT_INDEX_ERROR);
         return;
     }
 
-    // TODO: duplicated code -> make func
-
     // Create a new node
     Node *temp = NULL;
-    temp = (Node*)malloc(sizeof(Node));
+    temp = Node_alloc(data, NULL);
+
     if (temp == NULL){
-        printf("%s\n", MEMORY_ALLOCATION_ERROR);
-        return;
+        return;     // memory allocation failed
     }
 
-    temp->data = (char*)malloc(sizeof(char) * (strlen(data) + 1));
-    if (temp->data == NULL) {
-        printf("%s\n", MEMORY_ALLOCATION_ERROR);
-        return;
-    }
-    strcpy(temp->data, data);
-
-    // TODO: END OF duplicated code -> make func
-
-    if (index == 0){
+    if (index == 0){    // insert at the beginning - need to change the head of the list
         // If another node exists after the head, set it as temp's next, else, set temp's next to NULL
         if (strList->head == NULL){
             temp->next = NULL;
@@ -150,7 +158,6 @@ void StrList_insertAt(StrList* strList, const char* data,int index){
     }
     else {
         Node *p = strList->head;
-        // TODO 2: kind of repeated code - get node at index
         int count = 0;
         // Go through list until the node before the desired index is reached
         while (count < index-1) {
@@ -172,7 +179,7 @@ void StrList_insertAt(StrList* strList, const char* data,int index){
 char* StrList_firstData(const StrList* strList){
     if (strList != NULL && strList->head != NULL)
         return strList->head->data;
-    return 0;
+    return NULL;
 }
 
 /*
@@ -199,8 +206,6 @@ void StrList_print(const StrList* strList){
  Prints the word at the given index to the standard output.
 */
 void StrList_printAt(const StrList* strList,int index){
-    // TODO 2: kind of repeated code - get node at index
-    // ASK: do i need to check these conditions? if index is out of bound, etc.
     if (index > strList->size || index < 0){
         printf("%s\n", INCORRECT_INDEX_ERROR);
         return;
@@ -215,8 +220,12 @@ void StrList_printAt(const StrList* strList,int index){
         p = p->next;
         count++;
     }
-    // If p != null???
-    printf("%s\n", p->data);
+    if (p != NULL) {
+        printf("%s\n", p->data);
+    }
+    else {      // if NULL,  empty print
+        printf("\n");
+    }
 }
 
 /*
@@ -229,25 +238,23 @@ int StrList_printLen(const StrList* strList) {
         p = strList->head;
     }
     while (p != NULL){
-        count += strlen(p->data);         // length of curr data without the space
+        count += strlen(p->data);         // length of curr data without the spaces
         p = p->next;
     }
-    return count;       // remove last space
+    return count;
 }
 
 /*
 Given a string, return the number of times it exists in the list.
 */
 int StrList_count(StrList* strList, const char* data){
-    // ASK: exists as a whole in one data string? or can it also exist as a substring inside a data string?
-    // I assume it's the whole data that needs to be this string
     const Node *p = NULL;
     if (strList != NULL){
         p = strList->head;
     }
     int count = 0;
     while (p != NULL){
-        if (!strcmp(p->data, data)){      // strcmp returns 0 when they are equal so we added '!'
+        if (strcmp(p->data, data) == 0){
             count++;
         }
         p = p->next;
@@ -263,27 +270,26 @@ void StrList_remove(StrList* strList, const char* data){
     if (strList != NULL){
         p = strList->head;
     }
-    // Deal with the head of the list - If the string match - the list needs to change its head
-    while (p != NULL && p->data != NULL && !strcmp(p->data, data)){
+    // Deal with the head of the list - If the string matches - the list needs to change its head
+    while (p != NULL && p->data != NULL && strcmp(p->data, data) == 0){
         strList->head = p->next;
         free(p->data);
         free(p);
         p = strList->head;   
         strList->size--;
     }
-    // Head is not the string, go through the list now
+    // Head is not the string, go through the rest of the list now
     Node *temp = NULL;
     if (p != NULL){
         temp = p;
         p = p->next;
     }
     while (p != NULL && p->data != NULL){
-        if (!strcmp(p->data, data)){
+        if (strcmp(p->data, data) == 0){
             temp->next = p->next;
 
-            // TODO 4: func to free node (data aswell)???
-            free(p->data);
-            free(p);
+            Node_free(p);
+
             p = temp->next;
             strList->size--;
         }
@@ -298,18 +304,17 @@ void StrList_remove(StrList* strList, const char* data){
 	Given an index and a list, remove the string at that index.
 */
 void StrList_removeAt(StrList* strList, int index){
-    // ASK: do i need to check these conditions? if index is out of bound, etc.
     if (strList == NULL || strList->size == 0 || index > strList->size || index < 0){
         printf("%s\n", INCORRECT_INDEX_ERROR);
         return;
     }
-    int count = 0;
     Node *p = NULL;
     if (strList != NULL){
         p = strList->head;
     }
 
     // Go through list until the node before the desired index is reached
+    int count = 0;
     while (count < index-1 && p != NULL){
         count++;
         p = p->next;
@@ -318,10 +323,7 @@ void StrList_removeAt(StrList* strList, int index){
     Node *temp = p->next;
     p->next = p->next->next;
     if (temp != NULL){
-        if (temp->data != NULL){
-            free (temp->data);
-        }
-        free (temp);
+        Node_free(temp);
     }
     strList->size--;
 }
@@ -332,19 +334,19 @@ void StrList_removeAt(StrList* strList, int index){
  */
 int StrList_isEqual(const StrList* strList1, const StrList* strList2){
     if (strList1 != NULL && strList2 != NULL) {
-        // They are both not null and their sizes are different
         if (strList1->size != strList2->size){
-                return 0;
+            // They are both not null and their sizes are different
+            return 0;   
         }
     }
     else{
         if (strList1 == NULL && strList2 == NULL){
-            // Both null
+            // Both null -> equal
             return 1;
         }
     }
-    
 
+    // Run over both lists, with a pointer on each
     const Node *p1 = NULL;
     const Node *p2 = NULL;
     if (strList1 != NULL){
@@ -355,9 +357,8 @@ int StrList_isEqual(const StrList* strList1, const StrList* strList2){
     }
 
     while (p1 != NULL && p2 != NULL){
-        // TODO: So many check for nulls, is this correct? do I need to check so much?
-        if (p1->data != NULL && p2->data != NULL && strcmp(p1->data, p2->data)){
-            return 0;
+        if (p1->data != NULL && p2->data != NULL && strcmp(p1->data, p2->data) != 0){
+            return 0;       // found difference, return false;
         }
         p1 = p1->next;
         p2 = p2->next;
@@ -374,12 +375,15 @@ StrList* StrList_clone(const StrList* strList){
     if (strList == NULL){
         return NULL;
     }
+
+    // list to be returned
     StrList *clonedList = StrList_alloc();
+
+    // Goes over the given list, and for each node, it pushed a "new" one with the same data to the cloned list
     const Node *p = NULL;
     p = strList->head;
-    // TODO: so many checks for null!!!
     while (p != NULL) {
-        StrList_insertAt(clonedList, p->data, 0);
+        StrList_insertAt(clonedList, p->data, 0);   // Insert at 0, "pushing" everyone to the right
         p = p->next;
     }
     return clonedList;
@@ -390,7 +394,7 @@ StrList* StrList_clone(const StrList* strList){
  */
 void StrList_reverse(StrList* strList){
     // We will use 3 pointers, each iteration we will "change the direction" of the "next" pointer
-    // If list is of size <= 1, no action needed
+    // If list is NULL or of size <= 1, no action needed
     if (strList == NULL || strList->size <= 1){
         return;
     }
@@ -430,16 +434,16 @@ void StrList_sort(StrList* strList){
     }
 
     Node *p, *lastNode = NULL;        // pointer for iteration over the list
-    int swapped;
+    int swaps = 0;
 
     /*
     We are using bubble-sort to send the "biggest" data to the end of the list,
     while keeping a pointer on the end of the unsorted "range", (each iteration we have 1 less node to visit).
-    'swapped' holds 1 if a single swap was made while going through the list,
+    'swaps' holds the number of swaps while going through the list,
     if no swaps were made -> the list is sorted.
     */
     do {
-        swapped = 0;
+        swaps = 0;
         p = strList->head;
         
         // While the end is not met
@@ -449,12 +453,12 @@ void StrList_sort(StrList* strList){
                 p->data = p->next->data;
                 p->next->data = temp;
 
-                swapped = 1;
+                swaps++;
             }
             p = p->next;
         }
         lastNode = p;       // p is in place now, save this node so we don't need to visit him again
-    } while (swapped == 1);
+    } while (swaps != 0);     // keep going until no swaps are made -> list is sorted
 }
 
 /*
