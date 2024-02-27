@@ -10,9 +10,6 @@ all: StrList
 
 .PHONY: clean
 
-test: test.o StrList.o
-	$(CC) $(CFLAGS) -o $@ $^ 
-
 StrList: $(TARGET_OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 
@@ -20,4 +17,4 @@ StrList: $(TARGET_OBJECTS)
 	$(CC) $(CFLAGS) -c $^
 
 clean:
-	rm -f *.o StrList test *.gch
+	rm -f *.o StrList *.gch *.h.gch
