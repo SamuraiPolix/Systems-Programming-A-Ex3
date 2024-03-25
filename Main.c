@@ -115,12 +115,15 @@ int main() {
                 break;
             case EOF:
             case EXIT:
+                StrList_free(strList);
                 return 0;
                 break;        
             default:
                 printf("ERROR: incorrect input!");
         }
     } while (action != 0);
+
+    StrList_free(strList);
 
     return 0;
 }

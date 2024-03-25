@@ -105,6 +105,7 @@ void StrList_insertLast(StrList* strList, const char* data){
     temp = Node_alloc(data, NULL);
 
     if (temp == NULL){
+        Node_free(temp);
         return;     // memory allocation failed
     }
 
@@ -141,6 +142,7 @@ void StrList_insertAt(StrList* strList, const char* data,int index){
     temp = Node_alloc(data, NULL);
 
     if (temp == NULL){
+        Node_free(temp);
         return;     // memory allocation failed
     }
 

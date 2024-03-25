@@ -4,7 +4,7 @@ DEPS = StrList.h
 TARGET_OBJECTS = Main.o StrList.o
 
 # FLAGS
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g 			# add -ggdb3 if we are checking memory leaks
 
 all: StrList
 
